@@ -161,9 +161,10 @@ would need to be re-added to `public/menu.html` and `public/app.js`.
   Facebook page instead rather than risk publishing wrong hours. Worth
   confirming the real hours with the shop and adding them directly if you
   want that displayed.
-- Address corrected to **16 Main Street** (Tripadvisor's listing, which
-  includes the postcode BT94 1GJ) — earlier drafts had 14, which appears
-  to be wrong.
+- Address is **14 Main Street** (confirmed correct). An earlier draft used
+  16 based on Tripadvisor's listing, which turned out to be wrong — worth
+  double-checking the postcode BT94 1GJ still matches 14 if that becomes
+  important (e.g. for Google Maps accuracy).
 
 ## Service fee (covers Stripe's cut)
 
