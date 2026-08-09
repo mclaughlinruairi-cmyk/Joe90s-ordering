@@ -142,7 +142,40 @@ one.
 
 Note: this site is set up for **collection only** (no delivery), matching
 how Joe 90's currently operates. If that changes, the fulfilment toggle
-would need to be re-added to `public/index.html` and `public/app.js`.
+would need to be re-added to `public/menu.html` and `public/app.js`.
+
+## Site structure (updated)
+
+- `public/index.html` — the home/marketing page: hero, food gallery, About
+  Us, reviews, and contact (with a Google Maps embed and Facebook link).
+- `public/menu.html` — the actual ordering page (menu, cart, checkout).
+  The "Order Now" button on the home page links here.
+- Food photos in `public/images/food/` were cropped from the menu photo
+  you sent — fine for now, but real photography would look sharper. Swap
+  them out any time; same filenames, same aspect ratio.
+- Reviews on the home page are genuine short excerpts from Joe 90's
+  Tripadvisor page, each attributed to the reviewer. Update these if you'd
+  rather feature different or more recent ones.
+- Opening hours are deliberately not stated precisely on the site — the
+  sources I checked disagreed with each other, so it links to the shop's
+  Facebook page instead rather than risk publishing wrong hours. Worth
+  confirming the real hours with the shop and adding them directly if you
+  want that displayed.
+- Address corrected to **16 Main Street** (Tripadvisor's listing, which
+  includes the postcode BT94 1GJ) — earlier drafts had 14, which appears
+  to be wrong.
+
+## Service fee (covers Stripe's cut)
+
+`server.js` automatically adds a "Service & card fee" line item to every
+order, calculated so the shop always receives the full menu subtotal after
+Stripe takes its cut — the customer effectively pays Stripe's processing
+fee instead of the shop absorbing it. This uses Stripe's standard UK
+domestic card rate (1.5% + 20p) as of 2026; see `computeServiceFeePence()`
+in `server.js` if that rate ever changes. Non-UK or premium/corporate cards
+cost Stripe slightly more than this, so on those specific transactions the
+shop nets a few pence less than the full subtotal — not worth solving for
+up front since Stripe doesn't tell you the card type until after charging.
 
 No code changes needed — the page checks for these files and falls back to
 a plain placeholder if they're missing.

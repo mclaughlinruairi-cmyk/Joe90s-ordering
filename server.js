@@ -41,6 +41,22 @@ const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 const PUBLIC_BASE_URL = (process.env.PUBLIC_BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
 const CURRENCY = 'gbp';
 
+// Stripe's standard UK domestic card rate (1.5% + 20p) as of 2026. This is
+// added as a visible "Service & card fee" line item so the shop always
+// nets the full menu subtotal — the customer covers the processing cost
+// instead of the shop absorbing it. See computeServiceFeePence() below for
+// the gross-up math. If Stripe's rates change, update these two constants.
+const STRIPE_RATE = 0.015;
+const STRIPE_FIXED_PENCE = 20;
+
+// Given a subtotal in pence, returns the service fee (in pence) that,
+// when added to the subtotal and charged as one total, leaves the shop
+// with exactly the subtotal after Stripe deducts its cut from the total.
+function computeServiceFeePence(subtotalPence) {
+  const totalPence = Math.ceil((subtotalPence + STRIPE_FIXED_PENCE) / (1 - STRIPE_RATE));
+  return totalPence - subtotalPence;
+}
+
 // ---------------------------------------------------------------------
 // menu (edit data/menu.json to change prices/items — no code change needed)
 // ---------------------------------------------------------------------
@@ -225,6 +241,10 @@ const server = http.createServer(async (req, res) => {
         lineItems.push({ name: item.n, unitAmount: Math.round(item.p * 100), qty: q });
       }
       if (lineItems.length === 0) return sendJSON(res, 400, { error: 'Cart is empty' });
+
+      const subtotalPence = lineItems.reduce((sum, li) => sum + li.unitAmount * li.qty, 0);
+      const feePence = computeServiceFeePence(subtotalPence);
+      lineItems.push({ name: 'Service & card fee', unitAmount: feePence, qty: 1 });
 
       if (!STRIPE_SECRET_KEY) {
         return sendJSON(res, 500, {

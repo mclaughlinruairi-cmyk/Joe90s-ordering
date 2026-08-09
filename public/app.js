@@ -2,6 +2,16 @@ let MENU = {};
 let cart = {}; // itemName -> qty
 const FULFIL = 'collect'; // Joe 90's is collection only — no delivery
 
+// Mirrors the same gross-up formula used server-side (server.js), purely
+// for showing the customer an accurate breakdown before they pay. The
+// actual charge is always calculated authoritatively on the server.
+const STRIPE_RATE = 0.015;
+const STRIPE_FIXED_PENCE = 20;
+function computeServiceFeePence(subtotalPence) {
+  const totalPence = Math.ceil((subtotalPence + STRIPE_FIXED_PENCE) / (1 - STRIPE_RATE));
+  return totalPence - subtotalPence;
+}
+
 async function loadMenu() {
   const res = await fetch('/api/menu');
   MENU = await res.json();
@@ -181,7 +191,14 @@ function removeItem(name) {
 
 function openCheckout() {
   closeSheet('cartOverlay');
-  document.getElementById('checkoutTotalAmt').textContent = `£${cartTotal().toFixed(2)}`;
+  const subtotal = cartTotal();
+  const subtotalPence = Math.round(subtotal * 100);
+  const feePence = computeServiceFeePence(subtotalPence);
+  const fee = feePence / 100;
+  const total = subtotal + fee;
+  document.getElementById('feeSubtotal').textContent = `£${subtotal.toFixed(2)}`;
+  document.getElementById('feeAmount').textContent = `£${fee.toFixed(2)}`;
+  document.getElementById('checkoutTotalAmt').textContent = `£${total.toFixed(2)}`;
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
