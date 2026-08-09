@@ -4,32 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Joe 90's Chip Shop | Order Online</title>
-<meta name="description" content="Order fish & chips, burgers, munchie boxes and more online from Joe 90's Chip Shop, Irvinestown — collection or delivery.">
+<meta name="description" content="Order fish & chips, burgers, munchie boxes and more online from Joe 90's Chip Shop, Irvinestown — collection only.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
 <header class="top">
-  <img class="hero-photo" src="/images/hero.jpg" alt="Joe 90's Chip Shop"
-       onerror="this.style.display='none'; document.getElementById('heroFallback').style.display='flex';">
-  <div class="hero-photo-fallback" id="heroFallback">Add a shopfront or food photo here (public/images/hero.jpg)</div>
+  <div class="hero-bg">
+    <img class="hero-photo" src="/images/hero.jpg" alt=""
+         onerror="this.style.display='none';">
+  </div>
+  <div class="hero-overlay"></div>
 
   <div class="top-content">
-    <div class="logo-wrap">
-      <img src="/images/logo.png" alt="Joe 90's logo"
-           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
-      <div class="logo-fallback" id="logoFallback" style="display:none;">J90</div>
+    <div class="logo-plate">
+      <img src="/images/logo.png" alt="Joe 90's Chip Shop logo">
     </div>
-    <div class="badge">Order online &middot; Collection &amp; Delivery</div>
-    <h1>Joe 90's Chip Shop</h1>
-    <p>14 Main Street, Irvinestown, Co. Fermanagh</p>
+
+    <p class="script-tag">Fresh. Fast. Fermanagh.</p>
+    <h1>Traditional Fish &amp; Chips</h1>
+    <p class="sub">14 Main Street, Irvinestown, Co. Fermanagh</p>
+
     <div class="info-strip">
       <span>📍 Irvinestown</span>
       <span>⏱ Ready in ~20 min</span>
-      <span>🅿️ Collection &amp; Delivery</span>
+      <span>🥡 Collection only</span>
     </div>
+
+    <button class="cta-btn" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+      <span>Order Now</span>
+      <span class="cta-arrow">↓</span>
+    </button>
   </div>
 </header>
 
@@ -39,7 +46,7 @@
   <div class="empty-note">Loading menu…</div>
 </main>
 
-<div class="cart-bar hidden" id="cartBar" onclick="openCart()">
+<div class="cart-bar" id="cartBar" onclick="openCart()">
   <strong id="cartBarText">0 items</strong>
   <span class="go">View order &rarr;</span>
 </div>
@@ -67,10 +74,7 @@
       <button class="close-x" onclick="closeSheet('checkoutOverlay')">✕</button>
     </div>
 
-    <div class="toggle-row">
-      <button id="collectBtn" class="active" onclick="setFulfil('collect')">🏠 Collection</button>
-      <button id="deliverBtn" onclick="setFulfil('deliver')">🚗 Delivery</button>
-    </div>
+    <div class="collection-note">🥡 Collection from 14 Main Street, Irvinestown</div>
 
     <div class="field">
       <label>Name</label>
@@ -79,10 +83,6 @@
     <div class="field">
       <label>Phone</label>
       <input id="custPhone" type="tel" placeholder="07xxx xxxxxx">
-    </div>
-    <div class="field" id="addressField">
-      <label>Delivery address</label>
-      <input id="custAddress" type="text" placeholder="Your address in Irvinestown">
     </div>
     <div class="field">
       <label>Notes for the kitchen (optional)</label>
@@ -99,8 +99,7 @@
 </div>
 
 <footer class="foot">
-  Built for Joe 90's Chip Shop &middot; secure payment powered by Stripe.<br>
-  Drop a logo into <code>public/images/logo.png</code> and a photo into <code>public/images/hero.jpg</code> to finish branding this page.
+  Built for Joe 90's Chip Shop &middot; secure payment powered by Stripe.
 </footer>
 
 <script src="/app.js"></script>

@@ -1,6 +1,6 @@
 let MENU = {};
 let cart = {}; // itemName -> qty
-let fulfil = 'collect';
+const FULFIL = 'collect'; // Joe 90's is collection only — no delivery
 
 async function loadMenu() {
   const res = await fetch('/api/menu');
@@ -30,6 +30,7 @@ function renderTabs() {
 function renderMenu() {
   const main = document.getElementById('menu');
   main.innerHTML = '';
+  let itemIndex = 0;
   Object.entries(MENU).forEach(([cat, items]) => {
     const section = document.createElement('div');
     section.className = 'category';
@@ -39,6 +40,8 @@ function renderMenu() {
     items.forEach((item) => {
       const row = document.createElement('div');
       row.className = 'item';
+      row.style.animationDelay = `${Math.min(itemIndex, 14) * 0.03}s`;
+      itemIndex++;
       row.innerHTML = `
         <div class="meta">
           <h3>${escapeHtml(item.n)}</h3>
@@ -100,7 +103,7 @@ function findItem(name) {
 function addItem(name) {
   cart[name] = (cart[name] || 0) + 1;
   renderControl(findItem(name));
-  updateCartBar();
+  updateCartBar(true);
 }
 function changeQty(name, delta) {
   cart[name] = (cart[name] || 0) + delta;
@@ -118,12 +121,17 @@ function cartTotal() {
   }, 0);
 }
 
-function updateCartBar() {
+function updateCartBar(bump) {
   const bar = document.getElementById('cartBar');
   const count = cartCount();
-  if (count === 0) { bar.classList.add('hidden'); return; }
-  bar.classList.remove('hidden');
-  document.getElementById('cartBarText').textContent = `${count} item${count > 1 ? 's' : ''} · £${cartTotal().toFixed(2)}`;
+  bar.classList.toggle('visible', count > 0);
+  document.getElementById('cartBarText').textContent = `${count} item${count === 1 ? '' : 's'} · £${cartTotal().toFixed(2)}`;
+  if (bump && count > 0) {
+    bar.classList.remove('bump');
+    // restart animation
+    void bar.offsetWidth;
+    bar.classList.add('bump');
+  }
 }
 
 function openCart() {
@@ -177,13 +185,6 @@ function openCheckout() {
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
-function setFulfil(mode) {
-  fulfil = mode;
-  document.getElementById('collectBtn').classList.toggle('active', mode === 'collect');
-  document.getElementById('deliverBtn').classList.toggle('active', mode === 'deliver');
-  document.getElementById('addressField').style.display = mode === 'deliver' ? 'block' : 'none';
-}
-
 async function placeOrder() {
   const btn = document.getElementById('payBtn');
   const errEl = document.getElementById('checkoutError');
@@ -191,16 +192,10 @@ async function placeOrder() {
 
   const name = document.getElementById('custName').value.trim();
   const phone = document.getElementById('custPhone').value.trim();
-  const address = document.getElementById('custAddress').value.trim();
   const notes = document.getElementById('custNotes').value.trim();
 
   if (!name || !phone) {
     errEl.textContent = 'Please enter your name and phone number.';
-    errEl.style.display = 'block';
-    return;
-  }
-  if (fulfil === 'deliver' && !address) {
-    errEl.textContent = 'Please enter a delivery address.';
     errEl.style.display = 'block';
     return;
   }
@@ -213,7 +208,7 @@ async function placeOrder() {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart, fulfilment: fulfil, name, phone, address, notes }),
+      body: JSON.stringify({ cart, fulfilment: FULFIL, name, phone, address: '', notes }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Something went wrong');
@@ -227,5 +222,4 @@ async function placeOrder() {
   }
 }
 
-setFulfil('collect');
 loadMenu();

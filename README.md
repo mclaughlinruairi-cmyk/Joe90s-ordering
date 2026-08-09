@@ -131,8 +131,18 @@ at Render following their "Custom Domains" docs for your service. Update
 Drop these files in and the placeholders disappear automatically:
 
 - `public/images/logo.png` — square logo, shown in a circle at the top
-- `public/images/hero.jpg` — a shopfront or food photo, shown as the header
-  banner (roughly 1200×400px works well)
+- `public/images/hero.jpg` — a shopfront or food photo, shown behind the dark
+  overlay in the header banner (roughly 1200×400px works well). Optional —
+  the header looks intentional even without one, thanks to the dark
+  gradient background.
+
+The logo already in `public/images/logo.png` was extracted from Joe 90's own
+posted menu. Swap it for a proper vector/high-res logo file if the shop has
+one.
+
+Note: this site is set up for **collection only** (no delivery), matching
+how Joe 90's currently operates. If that changes, the fulfilment toggle
+would need to be re-added to `public/index.html` and `public/app.js`.
 
 No code changes needed — the page checks for these files and falls back to
 a plain placeholder if they're missing.

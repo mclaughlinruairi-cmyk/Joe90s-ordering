@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Order confirmed | Joe 90's Chip Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
@@ -45,9 +46,7 @@ async function run() {
 
     const m = data.metadata || {};
     titleEl.textContent = "Order sent to the kitchen!";
-    subEl.textContent = m.fulfilment === 'deliver'
-      ? "Delivery in approx. 35 minutes"
-      : "Collection in approx. 20 minutes";
+    subEl.textContent = "Collection in approx. 20 minutes from 14 Main Street, Irvinestown";
 
     const receiptWrap = document.getElementById('receiptWrap');
     const receipt = document.getElementById('receiptContent');
@@ -57,9 +56,8 @@ async function run() {
       <div class="center">Irvinestown, Co. Fermanagh</div>
       <hr>
       <div class="rline"><span>Order #${m.order_ref || ''}</span><span>${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span></div>
-      <div>${(m.fulfilment || 'collect').toUpperCase()}</div>
+      <div>COLLECTION</div>
       <div>${m.name || ''} · ${m.phone || ''}</div>
-      ${m.fulfilment === 'deliver' ? `<div>${m.address || ''}</div>` : ''}
       <hr>
       <div class="rline"><strong>TOTAL</strong><strong>£${((data.amount_total||0)/100).toFixed(2)}</strong></div>
       ${m.notes ? `<hr><div>Note: ${m.notes}</div>` : ''}
