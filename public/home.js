@@ -62,6 +62,6 @@ function autoScrollCarousel(track, speedPxPerSec, direction) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  autoScrollCarousel(document.getElementById('carouselTrack'), 100, 'forward');
-  autoScrollCarousel(document.getElementById('reviewsTrack'), 70, 'reverse');
+  autoScrollCarousel(document.getElementById('carouselTrack'), 75, 'forward');
+  autoScrollCarousel(document.getElementById('reviewsTrack'), 52, 'reverse');
 });
