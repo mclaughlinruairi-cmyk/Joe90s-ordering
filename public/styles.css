@@ -1,8 +1,8 @@
 :root{
-  --brand:#c1121f;
-  --brand-dark:#7a0c14;
-  --brand-darker:#2b0507;
-  --brand-light:#fdece9;
+  --brand:#3d3630;
+  --brand-dark:#242019;
+  --brand-darker:#14110d;
+  --brand-light:#f2ede6;
   --gold:#f2c185;
   --ink:#231815;
   --muted:#7a6f6a;
@@ -38,7 +38,7 @@ header.top{
   align-items:flex-end;
   padding-bottom:34px;
   background:
-    radial-gradient(120% 90% at 50% -10%, #8f1420 0%, transparent 55%),
+    radial-gradient(120% 90% at 50% -10%, rgba(242,193,133,.14) 0%, transparent 55%),
     repeating-linear-gradient(135deg, rgba(255,255,255,.04) 0 2px, transparent 2px 26px),
     linear-gradient(160deg, var(--brand-darker) 0%, var(--brand-dark) 45%, var(--brand) 100%);
   background-size:200% 200%;
@@ -146,7 +146,8 @@ header.top .sub{
   display:inline-flex;
   align-items:center;
   gap:10px;
-  background:linear-gradient(135deg, #e0192a, var(--brand-dark));
+  background:linear-gradient(135deg, var(--brand), var(--brand-darker));
+  border:1px solid rgba(242,193,133,.4);
   color:#fff;
   border:none;
   padding:15px 30px;
@@ -155,7 +156,7 @@ header.top .sub{
   font-family:var(--font-head);
   border-radius:999px;
   cursor:pointer;
-  box-shadow:0 0 0 0 rgba(225,30,40,.55);
+  box-shadow:0 0 0 0 rgba(242,193,133,.55);
   animation: ctaGlow 2.4s ease-in-out infinite;
   transition: transform .18s var(--ease);
 }
@@ -163,9 +164,9 @@ header.top .sub{
 .cta-btn:active{transform:scale(.97);}
 .cta-arrow{animation: arrowBounce 1.6s ease-in-out infinite;}
 @keyframes ctaGlow{
-  0%{box-shadow:0 0 0 0 rgba(225,30,40,.5);}
-  70%{box-shadow:0 0 0 14px rgba(225,30,40,0);}
-  100%{box-shadow:0 0 0 0 rgba(225,30,40,0);}
+  0%{box-shadow:0 0 0 0 rgba(242,193,133,.5);}
+  70%{box-shadow:0 0 0 14px rgba(242,193,133,0);}
+  100%{box-shadow:0 0 0 0 rgba(242,193,133,0);}
 }
 @keyframes arrowBounce{
   0%,100%{transform:translateY(0);}
@@ -414,7 +415,7 @@ footer.foot{text-align:center;padding:26px 14px 40px;color:rgba(255,255,255,.7);
   align-items:center;
   gap:16px;
   width:max-content;
-  animation:carouselScroll 42s linear infinite;
+  will-change:transform;
 }
 .carousel-track img{
   height:220px;
@@ -474,10 +475,7 @@ footer.foot{text-align:center;padding:26px 14px 40px;color:rgba(255,255,255,.7);
   font-size:14px;
 }
 .reviews-carousel-wrap{padding:6px 0 20px;}
-.reviews-track{
-  animation-name:carouselScrollReverse;
-  animation-duration:34s;
-}
+.reviews-track{}
 .review-card{
   background:#fff;
   border-radius:14px;
@@ -576,7 +574,7 @@ footer.foot{text-align:center;padding:26px 14px 40px;color:rgba(255,255,255,.7);
   opacity:.9;
 }
 .menu-back:hover{opacity:1;}
-.menu-top-logo{height:34px; width:auto; filter:drop-shadow(0 2px 4px rgba(0,0,0,.3));}
+.menu-top-logo{height:34px; width:auto; filter:brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0,0,0,.3));}
 .menu-top-spacer{width:52px;}
 .menu-intro{
   text-align:center;
