@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Joe 90's Chip Shop | Irvinestown</title>
-<meta name="description" content="Traditional fish & chips, burgers, munchie boxes and the famous Sham Wrap. Order online for collection from Joe 90's, 16 Main Street, Irvinestown.">
+<meta name="description" content="Traditional fish & chips, burgers, munchie boxes and the famous Sham Wrap. Order online for collection from Joe 90's, Main Street, Irvinestown.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
-<body>
+<body class="brand-bg">
 
 <header class="top">
   <div class="hero-bg">
-    <img class="hero-photo" src="/images/hero.jpg" alt=""
+    <img class="hero-photo" src="/images/food/real-fish-chips.jpg" alt=""
          onerror="this.style.display='none';">
   </div>
   <div class="hero-overlay"></div>
@@ -25,7 +25,7 @@
 
     <p class="script-tag">Fresh. Fast. Fermanagh.</p>
     <h1>Traditional Fish &amp; Chips</h1>
-    <p class="sub">16 Main Street, Irvinestown, Co. Fermanagh</p>
+    <p class="sub">Main Street, Irvinestown, Co. Fermanagh</p>
 
     <div class="info-strip">
       <span>📍 Irvinestown</span>
@@ -40,38 +40,66 @@
   </div>
 </header>
 
-<!-- FOOD GALLERY -->
-<section class="section food-gallery">
-  <h2 class="section-title">What We're Known For</h2>
-  <div class="gallery-grid">
-    <figure><img src="/images/food/burger.jpg" alt="Burger from Joe 90's"><figcaption>Beef Burgers</figcaption></figure>
-    <figure><img src="/images/food/gravy-chips.jpg" alt="Chips with gravy from Joe 90's"><figcaption>Chips &amp; Gravy</figcaption></figure>
-    <figure><img src="/images/food/wrap.jpg" alt="Sham Wrap from Joe 90's"><figcaption>The Sham Wrap</figcaption></figure>
-    <figure><img src="/images/food/dirty-chip.jpg" alt="Dirty Chip from Joe 90's"><figcaption>Dirty Chip</figcaption></figure>
-  </div>
+<!-- FOOD CAROUSEL -->
+<section class="section carousel-section">
+  <h2 class="section-title">A Taste of Joe 90's</h2>
 </section>
+<div class="carousel-wrap">
+  <div class="carousel-track" id="carouselTrack">
+    <img src="/images/food/real-dirty-chip.jpg" alt="Dirty Chip from Joe 90's">
+    <img src="/images/food/real-sausage.jpg" alt="Sausage supper from Joe 90's">
+    <img src="/images/food/real-mixed-box.jpg" alt="Mixed chicken box from Joe 90's">
+    <img src="/images/food/real-burger-1.jpg" alt="Bacon cheese burger from Joe 90's">
+    <img src="/images/food/real-fish-chips.jpg" alt="Fish and chips from Joe 90's">
+    <img src="/images/food/real-shopfront.jpg" alt="Joe 90's shopfront, Irvinestown">
+    <img src="/images/food/real-wrap.jpg" alt="Wrap from Joe 90's">
+    <img src="/images/food/real-burger-2.jpg" alt="Burger from Joe 90's">
+    <img src="/images/food/real-gravy-chip.jpg" alt="Gravy chip box from Joe 90's">
+    <!-- duplicate set, so the scroll loop is seamless -->
+    <img src="/images/food/real-dirty-chip.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-sausage.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-mixed-box.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-burger-1.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-fish-chips.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-shopfront.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-wrap.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-burger-2.jpg" alt="" aria-hidden="true">
+    <img src="/images/food/real-gravy-chip.jpg" alt="" aria-hidden="true">
+  </div>
+</div>
 
 <!-- ABOUT -->
 <section class="section about">
   <h2 class="section-title">About Us</h2>
-  <p class="about-text">
-    Joe 90's is a family-run chip shop on Main Street, Irvinestown, serving
-    traditional fish &amp; chips, burgers, fried chicken and our own Sham
-    Wrap and Munchie Box since day one. Everything is cooked fresh to
-    order &mdash; nothing sits under a heat lamp waiting for you.
-  </p>
-  <p class="about-text">
-    We're a small local business, so if you're passing through Fermanagh
-    or you're a regular on Main Street, expect the same thing every time:
-    hot, fresh, generous portions, and a friendly face behind the counter.
-  </p>
+
+  <div class="about-card">
+    <div class="about-media"><img src="/images/food/real-shopfront.jpg" alt="Joe 90's shopfront, Irvinestown"></div>
+    <p class="about-text">
+      Joe 90's is a family-run chip shop on Main Street, Irvinestown,
+      serving traditional fish &amp; chips, burgers, fried chicken and our
+      own Sham Wrap and Munchie Box since day one. Everything is cooked
+      fresh to order &mdash; nothing sits under a heat lamp waiting for you.
+    </p>
+  </div>
+
+  <div class="about-card reverse">
+    <p class="about-text">
+      We're a small local business, so if you're passing through Fermanagh
+      or you're a regular on Main Street, expect the same thing every
+      time: hot, fresh, generous portions, and a friendly face behind the
+      counter.
+    </p>
+    <div class="about-media"><img src="/images/food/real-burger-2.jpg" alt="Burger from Joe 90's"></div>
+  </div>
 </section>
 
 <!-- REVIEWS -->
 <section class="section reviews">
   <h2 class="section-title">What People Say</h2>
-  <p class="reviews-sub">4.7 out of 5 on Tripadvisor, from 24 reviews</p>
-  <div class="review-grid">
+  <p class="reviews-sub">★ 4.7 out of 5 on Tripadvisor, from 24 reviews</p>
+</section>
+<div class="carousel-wrap reviews-carousel-wrap">
+  <div class="carousel-track reviews-track">
     <blockquote class="review-card">
       <p>“Joe 90's is arguably one of the best chippies around.”</p>
       <cite>— ATWI18Y, Tripadvisor</cite>
@@ -88,14 +116,48 @@
       <p>“Food was excellent and not greasy.”</p>
       <cite>— Graham V, Tripadvisor</cite>
     </blockquote>
+    <blockquote class="review-card">
+      <p>“It was all lovely. Would definitely recommend.”</p>
+      <cite>— PJ J, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card">
+      <p>“Food was as requested, warm and tasty.”</p>
+      <cite>— Ian F, Tripadvisor</cite>
+    </blockquote>
+    <!-- duplicate set, so the scroll loop is seamless -->
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“Joe 90's is arguably one of the best chippies around.”</p>
+      <cite>— ATWI18Y, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“Best chip shop around. Brilliant menu with plenty of options.”</p>
+      <cite>— Ellen M, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“Really nice family run chippy with great staff always smiling.”</p>
+      <cite>— binflynn1, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“Food was excellent and not greasy.”</p>
+      <cite>— Graham V, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“It was all lovely. Would definitely recommend.”</p>
+      <cite>— PJ J, Tripadvisor</cite>
+    </blockquote>
+    <blockquote class="review-card" aria-hidden="true">
+      <p>“Food was as requested, warm and tasty.”</p>
+      <cite>— Ian F, Tripadvisor</cite>
+    </blockquote>
   </div>
-</section>
+</div>
 
 <!-- CONTACT -->
 <section class="section contact">
   <h2 class="section-title">Contact &amp; Find Us</h2>
 
-  <div class="contact-grid">
+  <div class="location-card">
+    <div class="location-media"><img src="/images/food/real-fish-chips.jpg" alt="Fish and chips from Joe 90's Chip Shop"></div>
     <div class="contact-info">
       <p><strong>Address</strong><br>16 Main Street, Irvinestown, Co. Fermanagh, BT94 1GJ</p>
       <p><strong>Phone</strong><br><a href="tel:+442868622071">028 6862 2071</a></p>
@@ -107,15 +169,15 @@
       </div>
       <a class="cta-btn small" href="/menu.html">Order Online →</a>
     </div>
+  </div>
 
-    <div class="map-wrap">
-      <iframe
-        title="Joe 90's Chip Shop location"
-        src="https://www.google.com/maps?q=16+Main+Street,+Irvinestown,+BT94+1GJ&output=embed"
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
-      </iframe>
-    </div>
+  <div class="map-wrap">
+    <iframe
+      title="Joe 90's Chip Shop location"
+      src="https://www.google.com/maps?q=16+Main+Street,+Irvinestown,+BT94+1GJ&output=embed"
+      loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade">
+    </iframe>
   </div>
 </section>
 
