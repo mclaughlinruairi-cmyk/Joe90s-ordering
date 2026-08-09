@@ -58,6 +58,50 @@ function computeServiceFeePence(subtotalPence) {
 }
 
 // ---------------------------------------------------------------------
+// Kitchen ticket formatting — this is the actual text that will get sent
+// to a receipt printer once one is connected (e.g. via Star CloudPRNT).
+// For now it's used to print a full, readable ticket to the server log
+// on every order, so the format is already real rather than a mockup.
+// Sized for a narrow 58mm/32-character thermal roll — the most common
+// small-shop printer width — but reads fine on wider paper too.
+// ---------------------------------------------------------------------
+const TICKET_WIDTH = 32;
+function centreText(text, width = TICKET_WIDTH) {
+  const pad = Math.max(0, Math.floor((width - text.length) / 2));
+  return ' '.repeat(pad) + text;
+}
+function buildKitchenTicketLines({ ref, paymentMethod, amountPence, name, phone, notes, items }) {
+  const rule = '-'.repeat(TICKET_WIDTH);
+  const now = new Date();
+  const lines = [];
+  lines.push(centreText("JOE 90'S CHIP SHOP"));
+  lines.push(centreText('KITCHEN COPY'));
+  lines.push(rule);
+  lines.push(`Order  #${ref || '—'}`);
+  lines.push(`Time   ${now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}  ${now.toLocaleDateString('en-GB')}`);
+  lines.push(`Type   COLLECTION`);
+  lines.push(rule);
+  for (const [itemName, qty] of items || []) {
+    lines.push(`${qty} x ${itemName}`);
+  }
+  lines.push(rule);
+  if (notes) {
+    lines.push('NOTE:');
+    lines.push(notes);
+    lines.push(rule);
+  }
+  lines.push(`Customer: ${name || '—'}`);
+  lines.push(`Phone:    ${phone || '—'}`);
+  lines.push(rule);
+  if (paymentMethod === 'cash') {
+    lines.push(`DUE: £${(amountPence / 100).toFixed(2)}  CASH ON COLLECTION`);
+  } else {
+    lines.push(`PAID ONLINE   £${(amountPence / 100).toFixed(2)}`);
+  }
+  return lines;
+}
+
+// ---------------------------------------------------------------------
 // menu (edit data/menu.json to change prices/items — no code change needed)
 // ---------------------------------------------------------------------
 const MENU = JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'menu.json'), 'utf8'));
@@ -245,6 +289,15 @@ const server = http.createServer(async (req, res) => {
 
       const subtotalPence = lineItems.reduce((sum, li) => sum + li.unitAmount * li.qty, 0);
 
+      // Stripe's line_items aren't reliably available at webhook time for
+      // every payment mode (setup-mode cash orders don't have any at
+      // all), so the actual item list for the kitchen ticket travels in
+      // metadata as compact [name, qty] pairs. Metadata values are capped
+      // at 500 characters by Stripe — comfortably enough for a normal
+      // order, but very large orders get truncated gracefully.
+      let cartJson = JSON.stringify(lineItems.map((li) => [li.name, li.qty]));
+      if (cartJson.length > 490) cartJson = cartJson.slice(0, 487) + '…"]';
+
       // Card orders: charged online now, so the customer covers Stripe's
       // processing cost via a visible service fee (the shop always nets
       // the subtotal — see computeServiceFeePence()).
@@ -276,6 +329,7 @@ const server = http.createServer(async (req, res) => {
         'metadata[fulfilment]': fulfilment || 'collect',
         'metadata[payment_method]': payMethod,
         'metadata[subtotal_pence]': String(subtotalPence),
+        'metadata[cart_json]': cartJson,
         'metadata[name]': name || '',
         'metadata[phone]': phone || '',
         'metadata[address]': address || '',
@@ -362,11 +416,15 @@ const server = http.createServer(async (req, res) => {
         const amountPence = paymentMethod === 'cash'
           ? Number(session.metadata?.subtotal_pence || 0)
           : session.amount_total;
+        let items = [];
+        try { items = JSON.parse(session.metadata?.cart_json || '[]'); } catch { items = []; }
+
         saveOrder({
           id: session.id,
           ref: session.metadata?.order_ref,
           amountPence,
           paymentMethod,
+          items,
           stripeCustomerId: session.customer || null,
           fulfilment: session.metadata?.fulfilment,
           name: session.metadata?.name,
@@ -377,9 +435,21 @@ const server = http.createServer(async (req, res) => {
         });
 
         // --- Kitchen printer hook ---
-        // Once you know what printer the shop has, send the print job here
-        // (e.g. Star CloudPRNT or Epson ePOS Print). Deliberately left as a
-        // stub until real hardware is confirmed.
+        // Once you know what printer the shop has, send buildKitchenTicketLines(...)
+        // .join('\n') as the print job here (e.g. via Star CloudPRNT or Epson
+        // ePOS Print). For now the same ticket is printed to the server log
+        // in full on every order.
+        const ticket = buildKitchenTicketLines({
+          ref: session.metadata?.order_ref,
+          paymentMethod,
+          amountPence,
+          name: session.metadata?.name,
+          phone: session.metadata?.phone,
+          notes: session.metadata?.notes,
+          items,
+        });
+        console.log('\n' + ticket.join('\n') + '\n');
+
         if (paymentMethod === 'cash') {
           console.log(
             `🧾 Cash order ${session.metadata?.order_ref} — £${(amountPence / 100).toFixed(2)} due on collection. ` +
