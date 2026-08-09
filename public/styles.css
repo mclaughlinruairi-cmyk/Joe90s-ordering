@@ -526,6 +526,21 @@ footer.foot{text-align:center;padding:26px 14px 40px;color:rgba(255,255,255,.7);
 }
 .contact-info a{color:var(--brand-dark); font-weight:700; text-decoration:none;}
 .contact-info a:hover{text-decoration:underline;}
+.hours-block{margin-bottom:16px;}
+.hours-block strong{font-size:14.5px;}
+.hours-list{list-style:none; margin:8px 0 6px; padding:0; font-size:14px;}
+.hours-list li{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  padding:4px 0;
+  border-bottom:1px solid #f0ece8;
+  color:#4a3f3b;
+}
+.hours-list li:last-child{border-bottom:none;}
+.hours-list li span:first-child{font-weight:600;}
+.hours-list li span:last-child{color:var(--muted);}
+.hours-note{font-size:12.5px; color:var(--muted); margin:0 0 16px; line-height:1.5;}
 .social-row{display:flex; gap:10px; margin-bottom:6px; flex-wrap:wrap;}
 .social-btn{
   display:inline-flex;
