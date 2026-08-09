@@ -47,8 +47,16 @@ async function run() {
     }
 
     const m = data.metadata || {};
-    titleEl.textContent = "Order sent to the kitchen!";
-    subEl.textContent = "Collection in approx. 20 minutes from 16 Main Street, Irvinestown";
+    const isCash = data.paymentMethod === 'cash';
+    const amount = ((data.amount_total || 0) / 100).toFixed(2);
+
+    if (isCash) {
+      titleEl.textContent = "Order reserved!";
+      subEl.textContent = `Pay £${amount} cash when you collect — approx. 20 minutes from 16 Main Street, Irvinestown. Your card is held and will only be charged if you don't collect.`;
+    } else {
+      titleEl.textContent = "Order sent to the kitchen!";
+      subEl.textContent = "Collection in approx. 20 minutes from 16 Main Street, Irvinestown";
+    }
 
     const receiptWrap = document.getElementById('receiptWrap');
     const receipt = document.getElementById('receiptContent');
@@ -61,10 +69,10 @@ async function run() {
       <div>COLLECTION</div>
       <div>${m.name || ''} · ${m.phone || ''}</div>
       <hr>
-      <div class="rline"><strong>TOTAL</strong><strong>£${((data.amount_total||0)/100).toFixed(2)}</strong></div>
+      <div class="rline"><strong>${isCash ? 'DUE (CASH)' : 'TOTAL'}</strong><strong>£${amount}</strong></div>
       ${m.notes ? `<hr><div>Note: ${m.notes}</div>` : ''}
       <hr>
-      <div class="center">PAID ONLINE</div>
+      <div class="center">${isCash ? 'CASH ON COLLECTION — CARD HELD, NOT CHARGED' : 'PAID ONLINE'}</div>
       <div class="center">Thanks! ★★★★★</div>
     `;
     receiptWrap.style.display = 'flex';

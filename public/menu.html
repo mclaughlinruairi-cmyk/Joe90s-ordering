@@ -58,6 +58,19 @@
 
     <div class="collection-note">🥡 Collection from 16 Main Street, Irvinestown</div>
 
+    <div class="pay-method" id="payMethod">
+      <label class="pay-option active" data-value="card">
+        <input type="radio" name="payMethod" value="card" checked>
+        <span class="pay-option-title">Pay online now</span>
+        <span class="pay-option-sub">Card charged securely via Stripe.</span>
+      </label>
+      <label class="pay-option" data-value="cash">
+        <input type="radio" name="payMethod" value="cash">
+        <span class="pay-option-title">Cash on collection</span>
+        <span class="pay-option-sub">Pay in shop. We hold your card details and only charge if you don't collect your order.</span>
+      </label>
+    </div>
+
     <div class="field">
       <label>Name</label>
       <input id="custName" type="text" placeholder="Your name">
@@ -73,11 +86,12 @@
 
     <div class="fee-breakdown">
       <div class="rline"><span>Subtotal</span><span id="feeSubtotal">£0.00</span></div>
-      <div class="rline muted"><span>Service &amp; card fee</span><span id="feeAmount">£0.00</span></div>
+      <div class="rline muted" id="feeRow"><span>Service &amp; card fee</span><span id="feeAmount">£0.00</span></div>
     </div>
     <div class="cart-total" style="margin-top:4px;">
-      <span>Total to pay</span><span id="checkoutTotalAmt">£0.00</span>
+      <span id="totalLabel">Total to pay</span><span id="checkoutTotalAmt">£0.00</span>
     </div>
+    <p class="hold-note" id="holdNote" style="display:none;"></p>
 
     <button class="primary-btn" id="payBtn" onclick="placeOrder()">Pay &amp; place order</button>
     <div class="error-msg" id="checkoutError" style="display:none;"></div>

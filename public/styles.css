@@ -311,6 +311,32 @@ main > .empty-note{color:rgba(255,255,255,.8);}
   padding:10px 12px;border-radius:10px;margin-bottom:14px;
 }
 
+.pay-method{display:flex; flex-direction:column; gap:10px; margin-bottom:16px;}
+.pay-option{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  column-gap:10px;
+  row-gap:2px;
+  align-items:start;
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  padding:12px 14px;
+  cursor:pointer;
+  transition:border-color .2s ease, background .2s ease;
+}
+.pay-option input{grid-row:1 / 3; margin-top:3px; accent-color:var(--brand);}
+.pay-option-title{grid-column:2; font-weight:700; font-size:14px; color:var(--ink);}
+.pay-option-sub{grid-column:2; font-size:12.5px; color:var(--muted); line-height:1.4;}
+.pay-option.active{border-color:var(--brand); background:var(--brand-light);}
+.hold-note{
+  font-size:12.5px;
+  color:var(--muted);
+  background:var(--brand-light);
+  border-radius:10px;
+  padding:10px 12px;
+  margin:10px 0 0;
+  line-height:1.5;
+}
 .field{margin-bottom:12px;}
 .field label{display:block;font-size:12.5px;font-weight:700;margin-bottom:5px;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;}
 .field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit;transition:border-color .2s ease, box-shadow .2s ease;}

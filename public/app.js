@@ -1,5 +1,6 @@
 let MENU = {};
 let cart = {}; // itemName -> qty
+let paymentMethod = 'card'; // 'card' (pay now) or 'cash' (pay on collection)
 const FULFIL = 'collect'; // Joe 90's is collection only — no delivery
 
 // Mirrors the same gross-up formula used server-side (server.js), purely
@@ -189,16 +190,59 @@ function removeItem(name) {
   renderCartLines();
 }
 
-function openCheckout() {
-  closeSheet('cartOverlay');
+function initPaymentMethodToggle() {
+  const inputs = document.querySelectorAll('input[name="payMethod"]');
+  inputs.forEach((input) => {
+    input.addEventListener('change', () => {
+      paymentMethod = input.value;
+      document.querySelectorAll('.pay-option').forEach((el) => {
+        el.classList.toggle('active', el.dataset.value === paymentMethod);
+      });
+      updateCheckoutTotals();
+    });
+  });
+}
+
+// Recomputes the checkout breakdown for whichever payment method is
+// currently selected. Card orders show subtotal + service fee = total
+// charged now. Cash orders show subtotal only (no fee, since no online
+// charge is expected) plus a note explaining the card hold.
+function updateCheckoutTotals() {
   const subtotal = cartTotal();
   const subtotalPence = Math.round(subtotal * 100);
-  const feePence = computeServiceFeePence(subtotalPence);
-  const fee = feePence / 100;
-  const total = subtotal + fee;
+
+  const feeRow = document.getElementById('feeRow');
+  const totalLabel = document.getElementById('totalLabel');
+  const holdNote = document.getElementById('holdNote');
+  const payBtn = document.getElementById('payBtn');
+
   document.getElementById('feeSubtotal').textContent = `£${subtotal.toFixed(2)}`;
-  document.getElementById('feeAmount').textContent = `£${fee.toFixed(2)}`;
-  document.getElementById('checkoutTotalAmt').textContent = `£${total.toFixed(2)}`;
+
+  if (paymentMethod === 'cash') {
+    feeRow.style.display = 'none';
+    document.getElementById('checkoutTotalAmt').textContent = `£${subtotal.toFixed(2)}`;
+    totalLabel.textContent = 'Due in shop (cash)';
+    holdNote.style.display = 'block';
+    holdNote.textContent =
+      `No payment is taken now. We place a hold of £${subtotal.toFixed(2)} on your card, ` +
+      `which is only charged if you don't collect your order.`;
+    payBtn.textContent = 'Reserve order — pay cash on collection';
+  } else {
+    const feePence = computeServiceFeePence(subtotalPence);
+    const fee = feePence / 100;
+    const total = subtotal + fee;
+    feeRow.style.display = 'flex';
+    document.getElementById('feeAmount').textContent = `£${fee.toFixed(2)}`;
+    document.getElementById('checkoutTotalAmt').textContent = `£${total.toFixed(2)}`;
+    totalLabel.textContent = 'Total to pay';
+    holdNote.style.display = 'none';
+    payBtn.textContent = 'Pay & place order';
+  }
+}
+
+function openCheckout() {
+  closeSheet('cartOverlay');
+  updateCheckoutTotals();
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
@@ -219,13 +263,13 @@ async function placeOrder() {
 
   btn.disabled = true;
   btn.classList.add('loading');
-  btn.textContent = 'Redirecting to secure payment…';
+  btn.textContent = paymentMethod === 'cash' ? 'Redirecting to card verification…' : 'Redirecting to secure payment…';
 
   try {
     const res = await fetch('/api/create-checkout-session', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ cart, fulfilment: FULFIL, name, phone, address: '', notes }),
+      body: JSON.stringify({ cart, fulfilment: FULFIL, name, phone, address: '', notes, paymentMethod }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Something went wrong');
@@ -235,8 +279,9 @@ async function placeOrder() {
     errEl.style.display = 'block';
     btn.disabled = false;
     btn.classList.remove('loading');
-    btn.textContent = 'Pay & place order';
+    btn.textContent = paymentMethod === 'cash' ? 'Reserve order — pay cash on collection' : 'Pay & place order';
   }
 }
 
 loadMenu();
+initPaymentMethodToggle();

@@ -225,10 +225,11 @@ const server = http.createServer(async (req, res) => {
       } catch {
         return sendJSON(res, 400, { error: 'Invalid JSON body' });
       }
-      const { cart, fulfilment, name, phone, address, notes } = payload;
+      const { cart, fulfilment, name, phone, address, notes, paymentMethod } = payload;
       if (!cart || typeof cart !== 'object' || Object.keys(cart).length === 0) {
         return sendJSON(res, 400, { error: 'Cart is empty' });
       }
+      const payMethod = paymentMethod === 'cash' ? 'cash' : 'card';
 
       // Prices are always looked up server-side from menu.json — never
       // trust a price sent by the browser.
@@ -243,8 +244,22 @@ const server = http.createServer(async (req, res) => {
       if (lineItems.length === 0) return sendJSON(res, 400, { error: 'Cart is empty' });
 
       const subtotalPence = lineItems.reduce((sum, li) => sum + li.unitAmount * li.qty, 0);
-      const feePence = computeServiceFeePence(subtotalPence);
-      lineItems.push({ name: 'Service & card fee', unitAmount: feePence, qty: 1 });
+
+      // Card orders: charged online now, so the customer covers Stripe's
+      // processing cost via a visible service fee (the shop always nets
+      // the subtotal — see computeServiceFeePence()).
+      //
+      // Cash orders: no online charge is expected to happen at all, so no
+      // service fee is added. Instead the card is authorised (held, not
+      // captured) for the full subtotal as a no-show guarantee. If the
+      // customer collects and pays cash, the shop releases the hold in
+      // the Stripe dashboard (Cancel) — no money moves and no Stripe fee
+      // is ever charged. If they don't show up, the shop captures the
+      // hold (Capture) and the full order value is charged to their card.
+      if (payMethod === 'card') {
+        const feePence = computeServiceFeePence(subtotalPence);
+        lineItems.push({ name: 'Service & card fee', unitAmount: feePence, qty: 1 });
+      }
 
       if (!STRIPE_SECRET_KEY) {
         return sendJSON(res, 500, {
@@ -259,12 +274,24 @@ const server = http.createServer(async (req, res) => {
         cancel_url: `${PUBLIC_BASE_URL}/?cancelled=1`,
         'metadata[order_ref]': orderRef,
         'metadata[fulfilment]': fulfilment || 'collect',
+        'metadata[payment_method]': payMethod,
         'metadata[name]': name || '',
         'metadata[phone]': phone || '',
         'metadata[address]': address || '',
         'metadata[notes]': notes || '',
         ...flattenLineItems(lineItems),
       };
+
+      if (payMethod === 'cash') {
+        // Authorise only — don't take the money. Description shows up in
+        // the Stripe dashboard so whoever's on till can find it and knows
+        // exactly what it's for (Stripe search: the order ref works too).
+        params['payment_intent_data[capture_method]'] = 'manual';
+        params['payment_intent_data[description]'] =
+          `Joe 90's order ${orderRef} — cash on collection, card held as no-show guarantee (£${(subtotalPence / 100).toFixed(2)}). Cancel if collected & paid cash; Capture if no-show.`;
+        params['payment_intent_data[metadata][order_ref]'] = orderRef;
+        params['payment_intent_data[metadata][payment_method]'] = 'cash';
+      }
 
       const session = await stripePost('checkout/sessions', params);
       return sendJSON(res, 200, { url: session.url });
@@ -275,8 +302,19 @@ const server = http.createServer(async (req, res) => {
       if (!sessionId) return sendJSON(res, 400, { error: 'Missing session_id' });
       if (!STRIPE_SECRET_KEY) return sendJSON(res, 500, { error: 'Stripe not configured' });
       const session = await stripeGet(`checkout/sessions/${sessionId}`);
+      // For card orders, "paid" means the charge went through. For cash
+      // orders no charge ever happens on a normal collection — the
+      // signal that the order is confirmed is the Checkout Session
+      // itself completing (session.status === 'complete'), which fires
+      // once the customer's card is authorised, even though
+      // payment_status stays 'unpaid' until/unless the hold is captured.
+      const paymentMethod = session.metadata?.payment_method || 'card';
+      const confirmed = paymentMethod === 'cash'
+        ? session.status === 'complete'
+        : session.payment_status === 'paid';
       return sendJSON(res, 200, {
-        paid: session.payment_status === 'paid',
+        paid: confirmed,
+        paymentMethod,
         amount_total: session.amount_total,
         metadata: session.metadata,
       });
@@ -303,12 +341,17 @@ const server = http.createServer(async (req, res) => {
         return res.end('Invalid payload');
       }
 
+      // checkout.session.completed fires once the customer finishes
+      // Checkout — for card orders that means paid; for cash orders it
+      // means their card is authorised (held) but not charged.
       if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
+        const paymentMethod = session.metadata?.payment_method || 'card';
         saveOrder({
           id: session.id,
           ref: session.metadata?.order_ref,
           amountPence: session.amount_total,
+          paymentMethod,
           fulfilment: session.metadata?.fulfilment,
           name: session.metadata?.name,
           phone: session.metadata?.phone,
@@ -321,7 +364,14 @@ const server = http.createServer(async (req, res) => {
         // Once you know what printer the shop has, send the print job here
         // (e.g. Star CloudPRNT or Epson ePOS Print). Deliberately left as a
         // stub until real hardware is confirmed.
-        console.log(`✅ Paid order ${session.metadata?.order_ref} — £${((session.amount_total || 0) / 100).toFixed(2)}`);
+        if (paymentMethod === 'cash') {
+          console.log(
+            `🧾 Cash order ${session.metadata?.order_ref} — £${((session.amount_total || 0) / 100).toFixed(2)} due on collection. ` +
+            `Card held, NOT charged. In Stripe dashboard: Cancel the payment when they collect & pay cash, or Capture it if they don't show.`
+          );
+        } else {
+          console.log(`✅ Paid order ${session.metadata?.order_ref} — £${((session.amount_total || 0) / 100).toFixed(2)}`);
+        }
       }
 
       res.writeHead(200);
