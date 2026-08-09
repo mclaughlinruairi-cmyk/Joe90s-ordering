@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Joe 90's Chip Shop | Order Online</title>
+<meta name="description" content="Order fish & chips, burgers, munchie boxes and more online from Joe 90's Chip Shop, Irvinestown — collection or delivery.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<header class="top">
+  <img class="hero-photo" src="/images/hero.jpg" alt="Joe 90's Chip Shop"
+       onerror="this.style.display='none'; document.getElementById('heroFallback').style.display='flex';">
+  <div class="hero-photo-fallback" id="heroFallback">Add a shopfront or food photo here (public/images/hero.jpg)</div>
+
+  <div class="top-content">
+    <div class="logo-wrap">
+      <img src="/images/logo.png" alt="Joe 90's logo"
+           onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='flex';">
+      <div class="logo-fallback" id="logoFallback" style="display:none;">J90</div>
+    </div>
+    <div class="badge">Order online &middot; Collection &amp; Delivery</div>
+    <h1>Joe 90's Chip Shop</h1>
+    <p>14 Main Street, Irvinestown, Co. Fermanagh</p>
+    <div class="info-strip">
+      <span>📍 Irvinestown</span>
+      <span>⏱ Ready in ~20 min</span>
+      <span>🅿️ Collection &amp; Delivery</span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" id="tabs"></nav>
+
+<main id="menu">
+  <div class="empty-note">Loading menu…</div>
+</main>
+
+<div class="cart-bar hidden" id="cartBar" onclick="openCart()">
+  <strong id="cartBarText">0 items</strong>
+  <span class="go">View order &rarr;</span>
+</div>
+
+<!-- CART SHEET -->
+<div class="sheet-overlay" id="cartOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Your order</h2>
+      <button class="close-x" onclick="closeSheet('cartOverlay')">✕</button>
+    </div>
+    <div id="cartLines"></div>
+    <div class="cart-total" id="cartTotal" style="display:none;">
+      <span>Total</span><span id="cartTotalAmt">£0.00</span>
+    </div>
+    <button class="primary-btn" id="checkoutBtn" onclick="openCheckout()" disabled>Checkout</button>
+  </div>
+</div>
+
+<!-- CHECKOUT SHEET -->
+<div class="sheet-overlay" id="checkoutOverlay">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Checkout</h2>
+      <button class="close-x" onclick="closeSheet('checkoutOverlay')">✕</button>
+    </div>
+
+    <div class="toggle-row">
+      <button id="collectBtn" class="active" onclick="setFulfil('collect')">🏠 Collection</button>
+      <button id="deliverBtn" onclick="setFulfil('deliver')">🚗 Delivery</button>
+    </div>
+
+    <div class="field">
+      <label>Name</label>
+      <input id="custName" type="text" placeholder="Your name">
+    </div>
+    <div class="field">
+      <label>Phone</label>
+      <input id="custPhone" type="tel" placeholder="07xxx xxxxxx">
+    </div>
+    <div class="field" id="addressField">
+      <label>Delivery address</label>
+      <input id="custAddress" type="text" placeholder="Your address in Irvinestown">
+    </div>
+    <div class="field">
+      <label>Notes for the kitchen (optional)</label>
+      <textarea id="custNotes" rows="2" placeholder="e.g. no onions"></textarea>
+    </div>
+
+    <div class="cart-total" style="margin-top:4px;">
+      <span>Total to pay</span><span id="checkoutTotalAmt">£0.00</span>
+    </div>
+
+    <button class="primary-btn" id="payBtn" onclick="placeOrder()">Pay &amp; place order</button>
+    <div class="error-msg" id="checkoutError" style="display:none;"></div>
+  </div>
+</div>
+
+<footer class="foot">
+  Built for Joe 90's Chip Shop &middot; secure payment powered by Stripe.<br>
+  Drop a logo into <code>public/images/logo.png</code> and a photo into <code>public/images/hero.jpg</code> to finish branding this page.
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>

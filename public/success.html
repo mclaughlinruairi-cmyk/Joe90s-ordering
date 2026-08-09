@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order confirmed | Joe 90's Chip Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+<div class="confirm-screen" id="screen">
+  <div class="tick">✓</div>
+  <h1 id="title">Checking your order…</h1>
+  <p id="sub">One moment.</p>
+  <div class="receipt-wrap" id="receiptWrap" style="display:none;">
+    <div class="receipt" id="receiptContent"></div>
+  </div>
+  <a class="back-link" href="/">&larr; Back to menu</a>
+</div>
+
+<script>
+async function run() {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+  const titleEl = document.getElementById('title');
+  const subEl = document.getElementById('sub');
+
+  if (!sessionId) {
+    titleEl.textContent = "No order found";
+    subEl.textContent = "Head back to the menu to place an order.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/order-status?session_id=${encodeURIComponent(sessionId)}`);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Could not check order status');
+
+    if (!data.paid) {
+      titleEl.textContent = "Payment not completed";
+      subEl.textContent = "If this seems wrong, contact the shop directly.";
+      return;
+    }
+
+    const m = data.metadata || {};
+    titleEl.textContent = "Order sent to the kitchen!";
+    subEl.textContent = m.fulfilment === 'deliver'
+      ? "Delivery in approx. 35 minutes"
+      : "Collection in approx. 20 minutes";
+
+    const receiptWrap = document.getElementById('receiptWrap');
+    const receipt = document.getElementById('receiptContent');
+    const now = new Date();
+    receipt.innerHTML = `
+      <div class="center"><strong>JOE 90'S CHIP SHOP</strong></div>
+      <div class="center">Irvinestown, Co. Fermanagh</div>
+      <hr>
+      <div class="rline"><span>Order #${m.order_ref || ''}</span><span>${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span></div>
+      <div>${(m.fulfilment || 'collect').toUpperCase()}</div>
+      <div>${m.name || ''} · ${m.phone || ''}</div>
+      ${m.fulfilment === 'deliver' ? `<div>${m.address || ''}</div>` : ''}
+      <hr>
+      <div class="rline"><strong>TOTAL</strong><strong>£${((data.amount_total||0)/100).toFixed(2)}</strong></div>
+      ${m.notes ? `<hr><div>Note: ${m.notes}</div>` : ''}
+      <hr>
+      <div class="center">PAID ONLINE</div>
+      <div class="center">Thanks! ★★★★★</div>
+    `;
+    receiptWrap.style.display = 'flex';
+  } catch (err) {
+    titleEl.textContent = "Couldn't confirm your order";
+    subEl.textContent = err.message;
+  }
+}
+run();
+</script>
+</body>
+</html>
