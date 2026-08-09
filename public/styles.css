@@ -10,7 +10,7 @@
   --ok:#1f7a3d;
   --radius:14px;
   --font-head: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-body: 'Quicksand', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-script: 'Caveat', cursive;
   --ease: cubic-bezier(.22,.9,.32,1.1);
 }
@@ -436,35 +436,33 @@ footer.foot{text-align:center;padding:26px 14px 40px;color:rgba(255,255,255,.7);
 }
 
 /* ---------- About (white card on red bg, like the reference) ---------- */
-.about{max-width:920px;}
+.about{max-width:960px;}
 .about-card{
-  background:#fff;
-  border-radius:20px;
-  box-shadow:0 16px 40px rgba(0,0,0,.25);
-  padding:32px;
   display:grid;
   grid-template-columns:1fr;
-  gap:24px;
+  gap:28px;
   align-items:center;
 }
 @media (min-width:640px){
-  .about-card{grid-template-columns:220px 1fr;}
-  .about-card.reverse{grid-template-columns:1fr 220px;}
+  .about-card{grid-template-columns:260px 1fr;}
+  .about-card.reverse{grid-template-columns:1fr 260px;}
   .about-card.reverse .about-media{order:2;}
 }
 .about-media{
-  border-radius:14px;
+  border-radius:16px;
   overflow:hidden;
-  box-shadow:0 6px 16px rgba(35,24,21,.15);
+  box-shadow:0 14px 34px rgba(0,0,0,.35);
 }
 .about-media img{width:100%; height:100%; object-fit:cover; display:block;}
 .about-text{
-  font-size:15px;
-  line-height:1.7;
-  color:#4a3f3b;
+  font-family:var(--font-body);
+  font-size:19px;
+  font-weight:500;
+  line-height:1.8;
+  color:rgba(255,255,255,.92);
   margin:0;
 }
-.about-card + .about-card{margin-top:20px;}
+.about-card + .about-card{margin-top:36px;}
 
 /* ---------- Reviews ---------- */
 .reviews-sub{
