@@ -284,10 +284,13 @@ const server = http.createServer(async (req, res) => {
 
       if (payMethod === 'cash') {
         // Setup mode: save the card, take/hold nothing. No line_items are
-        // allowed in this mode. The description shows up on the saved
-        // Stripe Customer/SetupIntent so it's easy to find in the
-        // dashboard later if a no-show charge is ever needed.
+        // allowed in this mode. Restricted to 'card' only — Stripe needs
+        // either an explicit payment_method_types list or a currency to
+        // know which of the account's enabled payment methods are valid
+        // here, and we specifically want a card saved (not a bank-debit
+        // mandate) since that's what gets charged later on a no-show.
         params.mode = 'setup';
+        params['payment_method_types[0]'] = 'card';
         params['setup_intent_data[description]'] =
           `Joe 90's order ${orderRef} — cash on collection, card saved as no-show protection (order value £${(subtotalPence / 100).toFixed(2)}). No charge unless customer doesn't collect.`;
         params['setup_intent_data[metadata][order_ref]'] = orderRef;
