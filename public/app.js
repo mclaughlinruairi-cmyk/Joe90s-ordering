@@ -35,6 +35,7 @@ function renderMenu() {
     section.className = 'category';
     section.id = 'cat-' + catId(cat);
     section.innerHTML = `<h2>${cat}</h2>`;
+    main.appendChild(section);
     items.forEach((item) => {
       const row = document.createElement('div');
       row.className = 'item';
@@ -49,7 +50,6 @@ function renderMenu() {
       section.appendChild(row);
       renderControl(item);
     });
-    main.appendChild(section);
   });
 }
 
