@@ -52,7 +52,7 @@ async function run() {
 
     if (isCash) {
       titleEl.textContent = "Order reserved!";
-      subEl.textContent = `Pay £${amount} cash when you collect — approx. 20 minutes from 16 Main Street, Irvinestown. Your card is held and will only be charged if you don't collect.`;
+      subEl.textContent = `Pay £${amount} cash when you collect — approx. 20 minutes from 16 Main Street, Irvinestown. Your card details are saved and will only be charged if you don't collect.`;
     } else {
       titleEl.textContent = "Order sent to the kitchen!";
       subEl.textContent = "Collection in approx. 20 minutes from 16 Main Street, Irvinestown";
@@ -72,7 +72,7 @@ async function run() {
       <div class="rline"><strong>${isCash ? 'DUE (CASH)' : 'TOTAL'}</strong><strong>£${amount}</strong></div>
       ${m.notes ? `<hr><div>Note: ${m.notes}</div>` : ''}
       <hr>
-      <div class="center">${isCash ? 'CASH ON COLLECTION — CARD HELD, NOT CHARGED' : 'PAID ONLINE'}</div>
+      <div class="center">${isCash ? 'CASH ON COLLECTION — CARD SAVED, NOT CHARGED' : 'PAID ONLINE'}</div>
       <div class="center">Thanks! ★★★★★</div>
     `;
     receiptWrap.style.display = 'flex';

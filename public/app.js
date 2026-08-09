@@ -224,8 +224,8 @@ function updateCheckoutTotals() {
     totalLabel.textContent = 'Due in shop (cash)';
     holdNote.style.display = 'block';
     holdNote.textContent =
-      `No payment is taken now. We place a hold of £${subtotal.toFixed(2)} on your card, ` +
-      `which is only charged if you don't collect your order.`;
+      `No payment or hold is taken now. We securely save your card details — ` +
+      `you're only charged £${subtotal.toFixed(2)} if you don't collect your order.`;
     payBtn.textContent = 'Reserve order — pay cash on collection';
   } else {
     const feePence = computeServiceFeePence(subtotalPence);
